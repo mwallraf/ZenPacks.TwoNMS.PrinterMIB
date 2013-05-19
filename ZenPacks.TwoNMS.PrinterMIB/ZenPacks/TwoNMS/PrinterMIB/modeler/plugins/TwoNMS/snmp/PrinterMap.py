@@ -28,7 +28,7 @@ class PrinterMap(SnmpPlugin):
     weight = 15
     
     prtMarkerSupplies_columns = {
-         #'.3': 'prtMarkerSuppliesColorantIndex', # snmp index
+         '.3.1': 'prtMarkerSuppliesColorantIndex', # snmp index
          '.5.1': 'PrtMarkerSuppliesTypeTC', # see cartType
          '.6.1': 'prtMarkerSuppliesDescription',  # "ex. "Black Toner Cartridge HP Q6000A""
          '.7.1': 'PrtMarkerSuppliesSupplyUnitTC', # see cartUnit
@@ -117,37 +117,73 @@ class PrinterMap(SnmpPlugin):
         colors = tabledata.get("prtMarkerColorant")
 
         #log.info('-- SUPPLIES & INFO --')
-        #log.info(supplies)
-        #log.info(colors)
+        #log.info("Supplies %s ", supplies)
+        #log.info("Colours %s " , colors)
 
-        # If no data returned then simply return
-        if not supplies:
-            log.warn( 'No SNMP response from %s for the %s plugin', device.id, self.name() )
+        # Modified by Jane Curry - April 25th, 2013
+        # If no data at all returned then simply return
+        # hp7410 reports data for supplies but not for colors
+        # Don't want to return as below on the failure of ONE of these tables
+        #
+        if (not supplies) and (not colors):
+            log.warn( 'No SNMP response for supplies or colors from %s for the %s plugin', device.id, self.name() )
             return
+
+#        if not supplies:
+#            log.warn( 'No SNMP response for supplies from %s for the %s plugin', device.id, self.name() )
+#            return
         
-        if not colors:
-            log.warn( 'No SNMP response from %s for the %s plugin', device.id, self.name() )
-            return
+#        if not colors:
+#            log.warn( 'No SNMP response for colors from %s for the %s plugin', device.id, self.name() )
+#            return
         
         rm = self.relMap()
         
         for oid,data in supplies.iteritems():
+            # Uncomment next 2 lines for debugging when modeling
+            #log.info("OID= %s", oid)
+            #log.info("Data= %s", data)
+
             omsupply = self.objectMap(data)
-            omcolor = self.objectMap(colors[oid])
-            omsupply.id = self.prepId(omcolor.prtMarkerColorantValue)
-            omsupply.snmpindex = omcolor.prtMarkerColorantIndex
+            omcolor = self.relMap() #clear the omcolor temp array to prevent any possible crosstalk errors
+            try:
+                omcolor = self.objectMap(colors[oid])
+                omsupply.id = self.prepId(omcolor.prtMarkerColorantValue)
+            except KeyError: # colors[oid] is only valid for toner supplies
+                omsupply.id = self.cartType[str(omsupply.PrtMarkerSuppliesTypeTC)] #eg fuser or wasteToner
+                omcolor.prtMarkerColorantValue = omsupply.id
+
+            # Uncomment next 4 lines for debugging when modeling
+            #log.info('-- omsupply --')
+            #log.info(omsupply)
+            #log.info('-- omcolor --')
+            #log.info(omcolor)
+
+            # Non-toner supplies have a ColorantIndex of 0 but we need the oid value for the snmpindex - unsure on this
+            if omsupply.prtMarkerSuppliesColorantIndex == 0:
+                omsupply.prtMarkerSuppliesColorantIndex = oid
+
+            omsupply.snmpindex = omsupply.prtMarkerSuppliesColorantIndex # why not simply use oid instead?
             omsupply.prtMarkerColorantValue = omcolor.prtMarkerColorantValue
-            omsupply.prtMarkerColorantIndex = omcolor.prtMarkerColorantIndex
+            omsupply.prtMarkerColorantIndex = omsupply.prtMarkerSuppliesColorantIndex
 
             try:
                 omsupply.PrtMarkerSuppliesTypeTC = self.cartType[str(omsupply.PrtMarkerSuppliesTypeTC)]
                 omsupply.PrtMarkerSuppliesSupplyUnitTC = self.cartUnit[str(omsupply.PrtMarkerSuppliesSupplyUnitTC)]
                 omsupply.rgbColorCode = self.rgbColorCodes[omcolor.prtMarkerColorantValue]
             except KeyError:
-                log.error("error occurred " )
-                omsupply.rgbColorCode = self.rgbColorCodes['unknown']
+                log.info("Non-colorant supply logged" ) #fuser or wasteToner will need an 'other' color code
+                omsupply.rgbColorCode = self.rgbColorCodes['other']
+
+            # Uncomment next 2 lines for debugging when modeling
+            #log.info('-- SUPPLY "%s" STORED --', omsupply.id)
+            #log.info(omsupply)
 
             rm.append(omsupply)
+
+        # Uncomment next 2 lines for debugging when modeling
+        #log.info('-- SUPPLIES STORED --')
+        #log.info(rm)
 
         return rm
 

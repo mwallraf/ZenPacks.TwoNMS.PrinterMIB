@@ -10,11 +10,22 @@
                  provides=".interfaces.IPrinterMIBInfo"
                  />
 
-	<browser:resourceDirectory name="twonmsprintermibresource" directory="resources" />
+             <browser:resourceDirectory
+                 name="twonmsprintermibresource" 
+                 directory="resources" 
+                 />
+
+	// updated by jcurry:
+        // You MUST have the leading slash on 
+        // paths="/++resource++twonmsprintermibresource/PrinterMibSupply.js"
+        // or your GUI interface will barf on virtually every page complaining about
+        // InterfaceClass zope.interface.Interface>, u'PrinterMibSupply.js'
+        // The original 1.0 version of the ZenPack apparently worked with 3.x versions of Zenoss
+        // without that leading slash being there
 
         <browser:viewlet
                  name="js-twonmsPrinterMIB"
-                 paths="++resource++twonmsprintermibresource/PrinterMibSupply.js"
+                 paths="/++resource++twonmsprintermibresource/PrinterMibSupply.js"
                  weight="10"
                  manager="Products.ZenUI3.browser.interfaces.IJavaScriptSrcManager"
                  class="Products.ZenUI3.browser.javascript.JavaScriptSrcBundleViewlet"
@@ -22,4 +33,5 @@
                  />
     </configure>
 </configure>
+
 

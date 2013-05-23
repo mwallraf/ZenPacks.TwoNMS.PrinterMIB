@@ -12,7 +12,7 @@ Map for TwoNMS PrinterMIB
 ZenPacks.TwoNMS.PrinterMIB.Printer
 </property>
 <property visible="True" type="lines" id="zCollectorPlugins" >
-['zenoss.snmp.NewDeviceMap', 'zenoss.snmp.DeviceMap', 'zenoss.snmp.InterfaceMap', 'zenoss.snmp.RouteMap', 'TwoNMS.snmp.PrinterMap']
+['zenoss.snmp.NewDeviceMap', 'zenoss.snmp.DeviceMap', 'zenoss.snmp.InterfaceMap', 'TwoNMS.snmp.PrinterMap']
 </property>
 <tomanycont id='rrdTemplates'>
 <object id='PrinterSupply' module='Products.ZenModel.RRDTemplate' class='RRDTemplate'>

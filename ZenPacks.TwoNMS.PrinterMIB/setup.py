@@ -3,13 +3,13 @@
 # or saved.  Do not modify them directly here.
 # NB: PACKAGES is deprecated
 NAME = "ZenPacks.TwoNMS.PrinterMIB"
-VERSION = "1.0"
+VERSION = "1.1"
 AUTHOR = "2NMS - Maarten Wallraf"
 LICENSE = ""
 NAMESPACE_PACKAGES = ['ZenPacks', 'ZenPacks.TwoNMS']
 PACKAGES = ['ZenPacks', 'ZenPacks.TwoNMS', 'ZenPacks.TwoNMS.PrinterMIB']
 INSTALL_REQUIRES = []
-COMPAT_ZENOSS_VERS = ">= 3.0"
+COMPAT_ZENOSS_VERS = ">= 4.2.0"
 PREV_ZENPACK_NAME = ""
 # STOP_REPLACEMENTS
 ################################

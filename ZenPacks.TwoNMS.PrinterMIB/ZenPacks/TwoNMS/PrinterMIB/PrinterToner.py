@@ -1,6 +1,6 @@
 ######################################################################
 #
-# ZenPacks.TwoNMS.PrinterMIB.Supply object class
+# ZenPacks.TwoNMS.PrinterMIB.Toner object class
 #
 ######################################################################
 
@@ -22,22 +22,24 @@ from Products.ZenModel.DeviceComponent import DeviceComponent
 from Products.ZenModel.ManagedEntity import ManagedEntity
 
 import logging
-log = logging.getLogger('PrinterMIB.Supply')
+log = logging.getLogger('PrinterMIB.Toner')
 
-class PrinterSupply(DeviceComponent, ManagedEntity):
-    """a PrinterMIB.Supply object"""
+class PrinterToner(DeviceComponent, ManagedEntity):
+    """a PrinterMIB.Toner object"""
 
-    portal_type = meta_type = 'PrinterSupply'
+    portal_type = meta_type = 'PrinterToner'
     
     #**************Custom data Variables here from modeling************************
     
     supplyId = ""
-    prtMarkerSuppliesDescription = ""
+    prtMarkerSuppliesColorantValue = ""
+    prtMarkerSuppliesDescription =""
     prtMarkerSuppliesLevel = 0
     prtMarkerSuppliesMaxCapacity = 0
-    prtMarkerSuppliesSupplyUnit = ""
-    usagepct = 0
+    prtMarkerSuppliesSupplyUnit = 0
     prtMarkerSuppliesType = ""
+    rgbColorCode = ""
+    usagepct = 0
 
     #prtMarkerSuppliesDescription = ""
     #prtMarkerColorantValue = ""
@@ -55,17 +57,19 @@ class PrinterSupply(DeviceComponent, ManagedEntity):
     #*************  Those should match this list below *******************
     _properties = (
         {'id':'supplyId', 'type':'string', 'mode':''},
+        {'id':'prtMarkerSuppliesColorantValue', 'type':'string', 'mode':''},
         {'id':'prtMarkerSuppliesDescription', 'type':'string', 'mode':''},
         {'id':'prtMarkerSuppliesLevel', 'type':'int', 'mode':''},
         {'id':'prtMarkerSuppliesMaxCapacity', 'type':'int', 'mode':''},
         {'id':'prtMarkerSuppliesSupplyUnit', 'type':'string', 'mode':''},
         {'id':'prtMarkerSuppliesType', 'type':'string', 'mode':''},
+        {'id':'rgbColorCode', 'type':'string', 'mode':''},
         {'id':'usagepct', 'type':'string', 'mode':''},
         )
     #****************
     
     _relations = (
-        ("printermibprinter", ToOne(ToManyCont, "ZenPacks.TwoNMS.PrinterMIB.Printer", "printermibsupply")),
+        ("printermibprinter", ToOne(ToManyCont, "ZenPacks.TwoNMS.PrinterMIB.Printer", "printermibtoner")),
         )
 
     def device(self):
@@ -88,9 +92,9 @@ class PrinterSupply(DeviceComponent, ManagedEntity):
     # define additional panes in the component section (dropdown menu)
     factory_type_information = (
         {
-            'id': 'PrinterSupply',
-            'meta_type': 'PrinterSupply',
-            'description': """PrinterMIB PrinterSupply component""",
+            'id': 'PrinterToner',
+            'meta_type': 'PrinterToner',
+            'description': """PrinterMIB PrinterToner component""",
             'actions': (
                  {
                      'id': 'viewHistory',
@@ -103,5 +107,5 @@ class PrinterSupply(DeviceComponent, ManagedEntity):
     )
 
 
-InitializeClass(PrinterSupply)
+InitializeClass(PrinterToner)
 

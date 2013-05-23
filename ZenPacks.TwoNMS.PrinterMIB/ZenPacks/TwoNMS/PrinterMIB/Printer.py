@@ -25,9 +25,29 @@ log = logging.getLogger('PrinterMIB.Printer')
 class Printer(Device):
     """A Printer Device"""
 
+    #**************Custom data Variables here from modeling************************
+    
+    prtGeneralPrinterName = ""
+    prtGeneralSerialNumber = ""
+    prtAlertCriticalEvents = -1  # unsupported if -1
+    prtAlertAllEvents = -1		 # unsupported if -1
+    
+    #**************END CUSTOM VARIABLES *****************************
+    
+    
+    #*************  Those should match this list below *******************
+    _properties = (
+        {'id':'prtGeneralPrinterName', 'type':'string', 'mode':''},
+        {'id':'prtGeneralSerialNumber', 'type':'string', 'mode':''},
+        {'id':'prtAlertCriticalEvents', 'type':'int', 'mode':''},
+        {'id':'prtAlertAllEvents', 'type':'int', 'mode':''},
+        )
+    #****************
+
     _relations = Device._relations + (
-        ('printermibsupply', ToManyCont(ToOne,
-            'ZenPacks.TwoNMS.PrinterMIB.PrinterSupply', 'printermibprinter')),
+        ('printermibtray', ToManyCont(ToOne, 'ZenPacks.TwoNMS.PrinterMIB.PrinterTray', 'printermibprinter')),
+        ('printermibsupply', ToManyCont(ToOne, 'ZenPacks.TwoNMS.PrinterMIB.PrinterSupply', 'printermibprinter')),
+        ('printermibtoner', ToManyCont(ToOne, 'ZenPacks.TwoNMS.PrinterMIB.PrinterToner', 'printermibprinter'))
         )
 
     factory_type_information = deepcopy(Device.factory_type_information)

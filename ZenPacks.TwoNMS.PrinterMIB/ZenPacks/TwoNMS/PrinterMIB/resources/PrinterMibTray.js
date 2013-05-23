@@ -12,24 +12,26 @@ function render_link(ob) {
 }
 
 
-
-ZC.PrinterSupplyPanel = Ext.extend(ZC.ComponentGridPanel, {
+ZC.PrinterTrayPanel = Ext.extend(ZC.ComponentGridPanel, {
     constructor: function(config) {
         config = Ext.applyIf(config||{}, {
-            componentType: 'PrinterSupply',
+            componentType: 'PrinterTray',
             fields: [
                 {name: 'uid'},
                 {name: 'name'},
                 {name: 'severity'},
                 {name: 'monitored'},
                 {name: 'monitor'},
-                {name: 'Description'},
-                {name: 'CurrentLevel'},
+                {name: 'InputName'},
+                {name: 'Model'},
+                {name: 'Type'},
                 {name: 'CurrentUsage'},
+                {name: 'CurrentLevel'},
                 {name: 'MaxLevel'},
+                {name: 'Unit'},
+                {name: 'Description'},
+                {name: 'MediaName'},
                 {name: 'usesMonitorAttribute'},
-                {name: 'SupplyType'},
-                {name: 'SupplyTypeUnit'},
                 {name: 'hasMonitor'},
                 {name: 'locking'},
             ],
@@ -39,22 +41,20 @@ ZC.PrinterSupplyPanel = Ext.extend(ZC.ComponentGridPanel, {
                 header: _t('Events'),
                 renderer: Zenoss.render.severity,
                 width: 60
-            },
-/*             {
-                id: 'name',
-                dataIndex: 'name',
-                header: _t('ID'),
-                sortable: true,
-            },
-*/            {
-                id: 'Description',
-                dataIndex: 'Description',
-                header: _t('Description'),
-                sortable: true,
-                width: 300
             },{
-                id: 'SupplyType',
-                dataIndex: 'SupplyType',
+                id: 'InputName',
+                dataIndex: 'InputName',
+                header: _t('Name'),
+                sortable: true,
+            },{
+                id: 'Model',
+                dataIndex: 'Model',
+                header: _t('Model'),
+                sortable: true,
+                width: 150
+            },{
+                id: 'Type',
+                dataIndex: 'Type',
                 header: _t('Type'),
                 sortable: true
             },{
@@ -73,9 +73,19 @@ ZC.PrinterSupplyPanel = Ext.extend(ZC.ComponentGridPanel, {
                 header: _t('Max Level'),
                 sortable: true
             },{
-                id: 'SupplyTypeUnit',
-                dataIndex: 'SupplyTypeUnit',
+                id: 'Unit',
+                dataIndex: 'Unit',
                 header: _t('Unit'),
+                sortable: true
+            },{
+                id: 'Description',
+                dataIndex: 'Description',
+                header: _t('Description'),
+                sortable: true
+            },{
+                id: 'MediaName',
+                dataIndex: 'MediaName',
+                header: _t('Media Name'),
                 sortable: true
             },{
                 id: 'monitored',
@@ -91,10 +101,10 @@ ZC.PrinterSupplyPanel = Ext.extend(ZC.ComponentGridPanel, {
             }]
 
         });
-        ZC.PrinterSupplyPanel.superclass.constructor.call(this, config);
+        ZC.PrinterTrayPanel.superclass.constructor.call(this, config);
     }
 });
 
-Ext.reg('PrinterSupplyPanel', ZC.PrinterSupplyPanel);
-ZC.registerName('PrinterSupply', _t('PrinterSupply'), _t('Printer Supplies'));
+Ext.reg('PrinterTrayPanel', ZC.PrinterTrayPanel);
+ZC.registerName('PrinterTray', _t('PrinterTray'), _t('Printer Input Trays'));
 })();

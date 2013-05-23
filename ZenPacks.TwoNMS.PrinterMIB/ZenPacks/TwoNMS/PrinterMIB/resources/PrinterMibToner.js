@@ -13,10 +13,10 @@ function render_link(ob) {
 
 
 
-ZC.PrinterSupplyPanel = Ext.extend(ZC.ComponentGridPanel, {
+ZC.PrinterTonerPanel = Ext.extend(ZC.ComponentGridPanel, {
     constructor: function(config) {
         config = Ext.applyIf(config||{}, {
-            componentType: 'PrinterSupply',
+            componentType: 'PrinterToner',
             fields: [
                 {name: 'uid'},
                 {name: 'name'},
@@ -24,10 +24,11 @@ ZC.PrinterSupplyPanel = Ext.extend(ZC.ComponentGridPanel, {
                 {name: 'monitored'},
                 {name: 'monitor'},
                 {name: 'Description'},
+                {name: 'Color'},
                 {name: 'CurrentLevel'},
-                {name: 'CurrentUsage'},
                 {name: 'MaxLevel'},
                 {name: 'usesMonitorAttribute'},
+                {name: 'CurrentUsage'},
                 {name: 'SupplyType'},
                 {name: 'SupplyTypeUnit'},
                 {name: 'hasMonitor'},
@@ -40,13 +41,18 @@ ZC.PrinterSupplyPanel = Ext.extend(ZC.ComponentGridPanel, {
                 renderer: Zenoss.render.severity,
                 width: 60
             },
-/*             {
+/*            {
                 id: 'name',
                 dataIndex: 'name',
                 header: _t('ID'),
                 sortable: true,
             },
-*/            {
+*/           {
+                id: 'Color',
+                dataIndex: 'Color',
+                header: _t('Color'),
+                sortable: true,
+            },{
                 id: 'Description',
                 dataIndex: 'Description',
                 header: _t('Description'),
@@ -91,10 +97,10 @@ ZC.PrinterSupplyPanel = Ext.extend(ZC.ComponentGridPanel, {
             }]
 
         });
-        ZC.PrinterSupplyPanel.superclass.constructor.call(this, config);
+        ZC.PrinterTonerPanel.superclass.constructor.call(this, config);
     }
 });
 
-Ext.reg('PrinterSupplyPanel', ZC.PrinterSupplyPanel);
-ZC.registerName('PrinterSupply', _t('PrinterSupply'), _t('Printer Supplies'));
+Ext.reg('PrinterTonerPanel', ZC.PrinterTonerPanel);
+ZC.registerName('PrinterToner', _t('PrinterToner'), _t('Printer Toners'));
 })();

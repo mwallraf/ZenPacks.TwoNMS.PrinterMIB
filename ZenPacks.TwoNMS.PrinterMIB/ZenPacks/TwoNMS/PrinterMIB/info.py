@@ -14,14 +14,45 @@ from Products.Zuul.decorators import info
 from ZenPacks.TwoNMS.PrinterMIB import interfaces
 
 
+## this is for PrinterSupply
 class PrinterMIBInfo(ComponentInfo):
     implements(interfaces.IPrinterMIBInfo)
 
+
     Description = ProxyProperty("prtMarkerSuppliesDescription")
-    Color = ProxyProperty("prtMarkerColorantValue")
+    MaxLevel = ProxyProperty("prtMarkerSuppliesMaxCapacity")
+    CurrentLevel = ProxyProperty("prtMarkerSuppliesLevel")
+    CurrentUsage = ProxyProperty("usagepct")
+    SupplyType = ProxyProperty("prtMarkerSuppliesType")
+    SupplyTypeUnit = ProxyProperty("prtMarkerSuppliesSupplyUnit")
+
+
+## this is for PrinterToner
+class PrinterMIBTonerInfo(ComponentInfo):
+    implements(interfaces.IPrinterMIBTonerInfo)
+
+
+    Description = ProxyProperty("prtMarkerSuppliesDescription")
+    Color = ProxyProperty("prtMarkerSuppliesColorantValue")
     MaxLevel = ProxyProperty("prtMarkerSuppliesMaxCapacity")
     CurrentLevel = ProxyProperty("prtMarkerSuppliesLevel")
     rgbColorCode = ProxyProperty("rgbColorCode")
-    SupplyType = ProxyProperty("PrtMarkerSuppliesTypeTC")
-    SupplyTypeUnit = ProxyProperty("PrtMarkerSuppliesSupplyUnitTC")
+    SupplyType = ProxyProperty("prtMarkerSuppliesType")
+    SupplyTypeUnit = ProxyProperty("prtMarkerSuppliesSupplyUnit")
+    CurrentUsage = ProxyProperty("usagepct")
+
+
+## this is for PrinterTray
+class PrinterMIBTrayInfo(ComponentInfo):
+    implements(interfaces.IPrinterMIBTrayInfo)
+
+    InputName = ProxyProperty("prtInputName")
+    Model = ProxyProperty("prtInputModel")
+    Type = ProxyProperty("prtInputType")
+    CurrentUsage = ProxyProperty("usagepct")
+    CurrentLevel = ProxyProperty("prtInputCurrentLevel")
+    MaxLevel = ProxyProperty("prtInputMaxCapacity")
+    Unit = ProxyProperty("prtCapacityUnit")
+    Description = ProxyProperty("prtInputDescription")
+    MediaName = ProxyProperty("prtInputMediaName")
 

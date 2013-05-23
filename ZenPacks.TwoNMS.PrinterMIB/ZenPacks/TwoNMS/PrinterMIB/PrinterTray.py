@@ -1,12 +1,12 @@
 ######################################################################
 #
-# ZenPacks.TwoNMS.PrinterMIB.Supply object class
+# ZenPacks.TwoNMS.PrinterMIB.Tray object class
 #
 ######################################################################
 
 __doc__=""" 
 
-Supply is a component of a ZenPacks.TwoNMS.PrinterMIB.Printer
+Tray is a component of a ZenPacks.TwoNMS.PrinterMIB.Printer
 
 $Id: $"""
 
@@ -22,31 +22,25 @@ from Products.ZenModel.DeviceComponent import DeviceComponent
 from Products.ZenModel.ManagedEntity import ManagedEntity
 
 import logging
-log = logging.getLogger('PrinterMIB.Supply')
+log = logging.getLogger('PrinterMIB.Tray')
 
-class PrinterSupply(DeviceComponent, ManagedEntity):
-    """a PrinterMIB.Supply object"""
+class PrinterTray(DeviceComponent, ManagedEntity):
+    """a PrinterMIB.Tray object"""
 
-    portal_type = meta_type = 'PrinterSupply'
+    portal_type = meta_type = 'PrinterTray'
     
     #**************Custom data Variables here from modeling************************
     
     supplyId = ""
-    prtMarkerSuppliesDescription = ""
-    prtMarkerSuppliesLevel = 0
-    prtMarkerSuppliesMaxCapacity = 0
-    prtMarkerSuppliesSupplyUnit = ""
-    usagepct = 0
-    prtMarkerSuppliesType = ""
-
-    #prtMarkerSuppliesDescription = ""
-    #prtMarkerColorantValue = ""
-    #prtMarkerColorantIndex = -1
-    #prtMarkerSuppliesMaxCapacity = 0
-    #prtMarkerSuppliesLevel = 0
-    #rgbColorCode = "000000"
-    #PrtMarkerSuppliesTypeTC = ""
-    #PrtMarkerSuppliesSupplyUnitTC = ""
+    prtCapacityUnit = ""
+    prtInputCurrentLevel = 0
+    prtInputMaxCapacity = 0
+    prtInputDescription = ""
+    prtInputMediaName = ""
+    prtInputModel =""
+    prtInputName = ""
+    prtInputType = ""
+    usagepct = ""
 
     
     #**************END CUSTOM VARIABLES *****************************
@@ -55,17 +49,20 @@ class PrinterSupply(DeviceComponent, ManagedEntity):
     #*************  Those should match this list below *******************
     _properties = (
         {'id':'supplyId', 'type':'string', 'mode':''},
-        {'id':'prtMarkerSuppliesDescription', 'type':'string', 'mode':''},
-        {'id':'prtMarkerSuppliesLevel', 'type':'int', 'mode':''},
-        {'id':'prtMarkerSuppliesMaxCapacity', 'type':'int', 'mode':''},
-        {'id':'prtMarkerSuppliesSupplyUnit', 'type':'string', 'mode':''},
-        {'id':'prtMarkerSuppliesType', 'type':'string', 'mode':''},
+        {'id':'prtCapacityUnit', 'type':'string', 'mode':''},
+        {'id':'prtInputCurrentLevel', 'type':'int', 'mode':''},
+        {'id':'prtInputMaxCapacity', 'type':'int', 'mode':''},
+        {'id':'prtInputDescription', 'type':'string', 'mode':''},
+        {'id':'prtInputMediaName', 'type':'string', 'mode':''},
+        {'id':'prtInputModel', 'type':'string', 'mode':''},
+        {'id':'prtInputName', 'type':'string', 'mode':''},
+        {'id':'prtInputType', 'type':'string', 'mode':''},
         {'id':'usagepct', 'type':'string', 'mode':''},
         )
     #****************
     
     _relations = (
-        ("printermibprinter", ToOne(ToManyCont, "ZenPacks.TwoNMS.PrinterMIB.Printer", "printermibsupply")),
+        ("printermibprinter", ToOne(ToManyCont, "ZenPacks.TwoNMS.PrinterMIB.Printer", "printermibtray")),
         )
 
     def device(self):
@@ -88,9 +85,9 @@ class PrinterSupply(DeviceComponent, ManagedEntity):
     # define additional panes in the component section (dropdown menu)
     factory_type_information = (
         {
-            'id': 'PrinterSupply',
-            'meta_type': 'PrinterSupply',
-            'description': """PrinterMIB PrinterSupply component""",
+            'id': 'PrinterTray',
+            'meta_type': 'PrinterTray',
+            'description': """PrinterMIB PrinterTray component""",
             'actions': (
                  {
                      'id': 'viewHistory',
@@ -103,5 +100,5 @@ class PrinterSupply(DeviceComponent, ManagedEntity):
     )
 
 
-InitializeClass(PrinterSupply)
+InitializeClass(PrinterTray)
 

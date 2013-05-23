@@ -10,18 +10,20 @@
                  provides=".interfaces.IPrinterMIBInfo"
                  />
 
+        <adapter factory=".info.PrinterMIBTonerInfo"
+                 for=".PrinterToner.PrinterToner"
+                 provides=".interfaces.IPrinterMIBTonerInfo"
+                 />
+
+        <adapter factory=".info.PrinterMIBTrayInfo"
+                 for=".PrinterTray.PrinterTray"
+                 provides=".interfaces.IPrinterMIBTrayInfo"
+                 />
+
              <browser:resourceDirectory
                  name="twonmsprintermibresource" 
                  directory="resources" 
                  />
-
-	// updated by jcurry:
-        // You MUST have the leading slash on 
-        // paths="/++resource++twonmsprintermibresource/PrinterMibSupply.js"
-        // or your GUI interface will barf on virtually every page complaining about
-        // InterfaceClass zope.interface.Interface>, u'PrinterMibSupply.js'
-        // The original 1.0 version of the ZenPack apparently worked with 3.x versions of Zenoss
-        // without that leading slash being there
 
         <browser:viewlet
                  name="js-twonmsPrinterMIB"
@@ -31,6 +33,25 @@
                  class="Products.ZenUI3.browser.javascript.JavaScriptSrcBundleViewlet"
                  permission="zope2.Public"
                  />
+
+        <browser:viewlet
+                 name="js-twonmsPrinterMIBToner"
+                 paths="/++resource++twonmsprintermibresource/PrinterMibToner.js"
+                 weight="10"
+                 manager="Products.ZenUI3.browser.interfaces.IJavaScriptSrcManager"
+                 class="Products.ZenUI3.browser.javascript.JavaScriptSrcBundleViewlet"
+                 permission="zope2.Public"
+                 />
+
+        <browser:viewlet
+                 name="js-twonmsPrinterMIBTray"
+                 paths="/++resource++twonmsprintermibresource/PrinterMibTray.js"
+                 weight="10"
+                 manager="Products.ZenUI3.browser.interfaces.IJavaScriptSrcManager"
+                 class="Products.ZenUI3.browser.javascript.JavaScriptSrcBundleViewlet"
+                 permission="zope2.Public"
+                 />
+
     </configure>
 </configure>
 

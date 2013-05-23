@@ -1,6 +1,6 @@
 ######################################################################
 #
-# ZenPacks.TwoNMS.PrinterMIB PrinterMap modeler plugin
+# ZenPacks.TwoNMS.PrinterMIB PrinterMap modeler plugin (RFC3805)
 #
 ######################################################################
 

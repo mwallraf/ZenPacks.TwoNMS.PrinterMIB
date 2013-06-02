@@ -536,7 +536,7 @@ class PrinterMap(SnmpPlugin):
             except:
                 log.warn("Error calculating the usage percentage.")
                 trayObj.usagepct = -1
-                continue
+                #continue
 
             # assign object to the relationsipMap
             trayObj.modname = "ZenPacks.TwoNMS.PrinterMIB.PrinterTray"
@@ -592,6 +592,16 @@ class PrinterMap(SnmpPlugin):
                 mapTemp.prtMarkerSuppliesColorantValue = self.PrtConsoleColorTC['na']
                 mapTemp.rgbColorCode = self.rgbColorCodes['na']
                 continue
+            except KeyError:
+                log.warn("KeyError occurred")
+                mapTemp.prtMarkerSuppliesColorantValue = self.PrtConsoleColorTC['na']
+                mapTemp.rgbColorCode = self.rgbColorCodes['na']
+                #continue
+            except:
+                log.warn("Unknown error occurred")
+                mapTemp.prtMarkerSuppliesColorantValue = self.PrtConsoleColorTC['na']
+                mapTemp.rgbColorCode = self.rgbColorCodes['na']
+                #continue
 
             # translate the supply unit type id
             try:
@@ -617,7 +627,7 @@ class PrinterMap(SnmpPlugin):
                     mapTemp.usagepct = "{0:.0f} %".format(100 - (float(mapTemp.prtMarkerSuppliesLevel)/mapTemp.prtMarkerSuppliesMaxCapacity * 100))
             except:
                 mapTemp.usagepct = -1
-                continue
+                #continue
 
             # add the temp map to the toner or supply map
             if (isToner == True):

@@ -541,6 +541,7 @@ class PrinterMap(SnmpPlugin):
             # assign object to the relationsipMap
             trayObj.modname = "ZenPacks.TwoNMS.PrinterMIB.PrinterTray"
             trayObj.supplyId = trayObj.id
+            trayObj.snmpindex = trayObj.id
             log.debug("New input tray found: %s", trayObj)
             mapTrays.append(trayObj)
             
@@ -622,11 +623,13 @@ class PrinterMap(SnmpPlugin):
             if (isToner == True):
                 mapTemp.modname = "ZenPacks.TwoNMS.PrinterMIB.PrinterToner"
                 mapTemp.supplyId = mapTemp.id
+                mapTemp.snmpindex = mapTemp.id
                 log.debug("New toner found: %s", mapTemp)
                 mapToners.append(mapTemp)
             else:
                 mapTemp.modname = "ZenPacks.TwoNMS.PrinterMIB.PrinterSupply"
                 mapTemp.supplyId = mapTemp.id
+                mapTemp.snmpindex = mapTemp.id
                 log.debug("New supply found: %s", mapTemp)
                 mapSupplies.append(mapTemp)
 

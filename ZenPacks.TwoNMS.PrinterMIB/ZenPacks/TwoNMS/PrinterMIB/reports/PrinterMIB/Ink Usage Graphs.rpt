@@ -80,7 +80,7 @@ function ShowPrintable() {
 <!-- BEGIN TABLE CONTENTS -->
     
     <tal:block tal:repeat="elements python:here.dmd.Devices.getSubDevices()">
-    <tal:block tal:condition="python: elements.hasObject('printermibsupply')" tal:repeat="element python:elements.printermibsupply()">
+    <tal:block tal:condition="python: elements.hasObject('printermibtoner')" tal:repeat="element python:elements.printermibtoner()">
     <tal:block tal:define="graphid string:graph_${repeat/element/index};
                            graphUrl python:element.getDefaultGraphDefs(request.get('drange', drange))[0]['url'];
                            device python:element.getDeviceName();">

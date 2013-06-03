@@ -16,14 +16,16 @@ from Products.DataCollector.plugins.CollectorPlugin import SnmpPlugin, GetTableM
 from Products.DataCollector.plugins.DataMaps import ObjectMap, RelationshipMap
 
 class PrinterMap(SnmpPlugin):
-    
+
+    rfc = 'RFC3805'
+
     # these are set specifically for each relmap() and objectMap()
     # needed because I use 1 modeler for multiple components
     #relname = "printermibsupply"
     #modname = "ZenPacks.TwoNMS.PrinterMIB.PrinterSupply"
 
 #    compname = ""
-    
+
     # New classification stuff uses weight to help it determine what class a
     # device should be in. Higher weight pushes the device to towards the
     # class were this plugin is defined.
@@ -39,7 +41,7 @@ class PrinterMap(SnmpPlugin):
         '5':    'interlockOpen',
         '6':    'interlockClosed',
         }
-    
+
     # Values for reading and writing the prtGeneralReset object
     PrtGeneralResetTC = {
         'na':    'UNKNOWN',    # TO NOT BREAK UNSUPPORTED PRINTERS
@@ -222,7 +224,7 @@ class PrinterMap(SnmpPlugin):
         '32':    'finSupplyMediaInput',
         '33':    'finAttribute',
         }
-        
+
 
     # The code that describes the type of alert for this entry in
     # the table
@@ -395,7 +397,7 @@ class PrinterMap(SnmpPlugin):
         '.15.1': 'prtInputModel',            # input model
         '.18.1': 'prtInputDescription',      # input supply description
     }
-    
+
     prtMarkerSupplies_columns = {
          '.2.1': 'prtMarkerSuppliesMarkerIndex', # snmp index
          '.3.1': 'prtMarkerSuppliesColorantIndex', # snmp index
@@ -405,12 +407,12 @@ class PrinterMap(SnmpPlugin):
          '.8.1': 'prtMarkerSuppliesMaxCapacity',  # Max level
          '.9.1': 'prtMarkerSuppliesLevel', # current level
          }
-    
+
     prtMarkerColorant_columns = {
         '.2.1': 'prtMarkerColorantIndex', #snmp index
         '.4.1': 'prtMarkerColorantValue', # color ex. "black"
         }
-    
+
     snmpGetTableMaps = (
         ## general info about printers - if supported
         GetTableMap('prtGeneral', '.1.3.6.1.2.1.43.5.1.1', prtGeneral_columns),
@@ -421,7 +423,7 @@ class PrinterMap(SnmpPlugin):
         ## get all printer supplies like toners, power, etc
         GetTableMap('prtMarkerSupplies', '.1.3.6.1.2.1.43.11.1.1', prtMarkerSupplies_columns),
 
-		## get the table that defines the colors for toners
+                ## get the table that defines the colors for toners
         GetTableMap('prtMarkerColorant', '.1.3.6.1.2.1.43.12.1.1', prtMarkerColorant_columns),
     )
 
@@ -438,22 +440,22 @@ class PrinterMap(SnmpPlugin):
         'yellow': 'E6E600',
         'black': '000000',
     }
-    
+
     def process(self, device, results, log):
-        
+
         log.info('processing %s for device %s', self.name(), device.id)
         mapSupplies = self.relMap()
         mapToners = self.relMap()
         mapTrays = self.relMap()
         mapGeneral = self.objectMap()
-        
+
         # put the output of the SNMP results in two variables for easy reading
         # getOtherOID = output of OIDs we didn't request
         # getMyOID = output of OIDs we request
         getOtherOID, getMyOID = results
         log.debug("getOtherOID table = %s ", getOtherOID)
         log.debug("getMyOID table = %s ", getMyOID)
-        
+
         # put each of our requested tables in separate variables for ease of reading
         tblGeneral = getMyOID.get("prtGeneral")
         tblTrays = getMyOID.get("prtInput")
@@ -462,28 +464,49 @@ class PrinterMap(SnmpPlugin):
 
         # if none of the tables have any output the return empty
         if not (tblGeneral or tblTrays or tblSupplies or tblColors):
-            log.warn('Device %s for the %s plugin does not support the PrinterMIB for general info, toners, supplies or colors', device.id, self.name() )
+            log.warn('Device %s for the %s plugin does not support the %s PrinterMIB', device.id, self.name(), self.rfc )
             return
 
         # for each table print some output if it's supported
         if tblGeneral:
-            log.info('Device %s for the %s plugin supports PrinterMIB general info', device.id, self.name())
             log.debug('tblGeneral = %s', tblGeneral)
             mapGeneral = self.processTblGeneral(tblGeneral, log)
+            log.debug('RESULTS = mapGeneral table = %s', mapGeneral)
+            if mapGeneral:
+            	log.info('Device %s for the %s plugin supports PrinterMIB general info', device.id, self.name())
+            else:
+            	log.info('Device %s for the %s plugin DOES NOT SUPPORT PrinterMIB general info', device.id, self.name())
+            	
         if tblTrays:
-            log.info('Device %s for the %s plugin supports PrinterMIB info trays', device.id, self.name())
             log.debug('tblTrays = %s', tblTrays)
             mapTrays = self.processTblTrays(tblTrays, log)
+            log.debug('RESULTS = mapTrays table = %s', mapTrays)
+            if mapTrays:
+            	log.info('Device %s for the %s plugin supports PrinterMIB input trays', device.id, self.name())
+            else:
+            	log.info('Device %s for the %s plugin DOES NOT SUPPORT PrinterMIB input trays', device.id, self.name())
+            	
         if tblSupplies or tblColors:
             if tblSupplies:
-                log.info('Device %s for the %s plugin supports PrinterMIB supplies', device.id, self.name())
                 log.debug('tblSupplies = %s', tblSupplies)
             if tblColors:
-                log.info('Device %s for the %s plugin supports PrinterMIB color toners', device.id, self.name())
                 log.debug('tblColors = %s', tblColors)
             mapSupplies, mapToners = self.processTblSupplies(tblSupplies, tblColors, log)
-
-        # now return all our results for the different components        
+            log.debug('RESULTS = mapSupplies table = %s', mapSupplies)
+            log.debug('RESULTS = mapToners table = %s', mapToners)
+            if mapSupplies:
+            	log.info('Device %s for the %s plugin supports PrinterMIB supplies', device.id, self.name())
+            else:
+            	log.info('Device %s for the %s plugin DOES NOT SUPPORT PrinterMIB supplies', device.id, self.name())
+            if mapToners:
+            	log.info('Device %s for the %s plugin supports PrinterMIB toners', device.id, self.name())
+            else:
+            	log.info('Device %s for the %s plugin DOES NOT SUPPORT PrinterMIB toners', device.id, self.name())
+            	
+            	
+            	
+        # now return all our results for the different components
+        log.debug("Returning the output of tables mapGeneral, mapSupplies, mapToners, mapTrays")
         return mapGeneral, mapSupplies, mapToners, mapTrays
 
 
@@ -501,10 +524,11 @@ class PrinterMap(SnmpPlugin):
         return tempObj
 
 
+
     # get a relationshipMap for the printer input trays if supported
     def processTblTrays(self, tblTrays, log):
         mapTrays = RelationshipMap(modname='ZenPacks.TwoNMS.PrinterMIB.PrinterTray', relname='printermibtray')
-        
+
         # iterate each tray and translate the mibs
         for trayId, trayData in tblTrays.iteritems():
             # create an input Tray object
@@ -518,7 +542,7 @@ class PrinterMap(SnmpPlugin):
             except AttributeError:
                 log.warn("Tray does not support the prtInputTypeTC oid")
                 trayObj.prtInputType = self.PrtInputTypeTC['na']
-                continue
+                #continue
 
             # translate PrtCapacityUnitTC
             try:
@@ -526,17 +550,14 @@ class PrinterMap(SnmpPlugin):
                     trayObj.prtCapacityUnit = self.PrtCapacityUnitTC[str(trayObj.prtCapacityUnitTC)]
             except AttributeError:
                 log.warn("Tray does not support the PrtCapacityUnitTC oid")
-                trayObj.prtCapacityUnit = self.prtCapacityUnitTC['na']
-                continue
+                trayObj.prtCapacityUnit = self.PrtCapacityUnitTC['na']
+                #continue
 
             # add a percentage value of the usage
             try:
-                if (trayObj.prtInputMaxCapacity != 0):
-                    trayObj.usagepct = "{0:.0f} %".format(100 - (float(trayObj.prtInputCurrentLevel)/trayObj.prtInputMaxCapacity * 100))
+                trayObj.usagepct = self.calculateUsagePct(trayObj.prtInputCurrentLevel, trayObj.prtInputMaxCapacity, log)
             except:
-                log.warn("Error calculating the usage percentage.")
-                trayObj.usagepct = -1
-                #continue
+                mapTemp.usagepct = 'na'
 
             # assign object to the relationsipMap
             trayObj.modname = "ZenPacks.TwoNMS.PrinterMIB.PrinterTray"
@@ -544,13 +565,12 @@ class PrinterMap(SnmpPlugin):
             trayObj.snmpindex = trayObj.id
             log.debug("New input tray found: %s", trayObj)
             mapTrays.append(trayObj)
-            
+
         return mapTrays
 
 
 
-
-    # combine the supplies + color tables and return 
+    # combine the supplies + color tables and return
     # a relationshipMap for all supplies
     # and a relationshipMap for all the ink cartridges (toners)
     def processTblSupplies(self, tblSupplies, tblColors, log):
@@ -565,12 +585,12 @@ class PrinterMap(SnmpPlugin):
         # simplify the tblColors map to make the code easier to read
         colors = {}
         for cId, cInfo in tblColors.iteritems():
-            colors[str(cId)] = cInfo['prtMarkerColorantValue']
+            colors[str(cId)] = cInfo['prtMarkerColorantValue'].split("\x00")[0]
         log.debug("colors table = %s", colors)
 
         # go over each supply and classifiy as toner (ink cartridge) or other supply
         for supplyId, supplyData in tblSupplies.iteritems():
-	
+
             # create a temp map first because we don't know yet what kind of supply we have
             mapTemp = self.objectMap(supplyData)
             mapTemp.id = self.prepId(supplyId)
@@ -587,13 +607,8 @@ class PrinterMap(SnmpPlugin):
                         mapTemp.rgbColorCode = self.rgbColorCodes[mapTemp.prtMarkerSuppliesColorantValue.lower()]
                     else:
                         mapTemp.prtMarkerSuppliesColorantValue = self.PrtConsoleColorTC['na']
-            except AttributeError:
-                log.warn("Supply does not support the prtMarkerSuppliesColorantIndex oid")
-                mapTemp.prtMarkerSuppliesColorantValue = self.PrtConsoleColorTC['na']
-                mapTemp.rgbColorCode = self.rgbColorCodes['na']
-                continue
-            except KeyError:
-                log.warn("KeyError occurred")
+            except (AttributeError, KeyError):
+                log.warn("AttributeErorr or KeyError occurred - Supply does not support the prtMarkerSuppliesColorantIndex oid")
                 mapTemp.prtMarkerSuppliesColorantValue = self.PrtConsoleColorTC['na']
                 mapTemp.rgbColorCode = self.rgbColorCodes['na']
                 #continue
@@ -610,7 +625,7 @@ class PrinterMap(SnmpPlugin):
             except AttributeError:
                 log.warn("Supply does not support the prtMarkerSuppliesSupplyUnitTC oid")
                 mapTemp.prtMarkerSuppliesSupplyUnit = self.PrtMarkerSuppliesSupplyUnitTC['na']
-                continue
+                #continue
 
             # translate the supply type id
             try:
@@ -619,15 +634,13 @@ class PrinterMap(SnmpPlugin):
             except AttributeError:
                 log.warn("Supply does not support the prtMarkerSuppliesTypeTC oid")
                 mapTemp.prtMarkerSuppliesType = self.PrtMarkerSuppliesTypeTC['na']
-                continue
-            
+                #continue
+
             # add a percentage value of the usage
             try:
-                if (mapTemp.prtMarkerSuppliesMaxCapacity != 0):
-                    mapTemp.usagepct = "{0:.0f} %".format(100 - (float(mapTemp.prtMarkerSuppliesLevel)/mapTemp.prtMarkerSuppliesMaxCapacity * 100))
+                mapTemp.usagepct = self.calculateUsagePct(mapTemp.prtMarkerSuppliesLevel, mapTemp.prtMarkerSuppliesMaxCapacity, log)
             except:
-                mapTemp.usagepct = -1
-                #continue
+                mapTemp.usagepct = 'na'
 
             # add the temp map to the toner or supply map
             if (isToner == True):
@@ -644,4 +657,29 @@ class PrinterMap(SnmpPlugin):
                 mapSupplies.append(mapTemp)
 
         return mapSupplies, mapToners
+
+    # calculate the usage pct
+    # special cases:
+    # if cur =  0 => return 100%
+    # if cur = -1 => return 'OTHER'
+    # if cur = -2 => return 'UNKNOWN'
+    # if cur = -3 => return 'UNKNOWN'
+    # if max = 0  => return 'na'
+    def calculateUsagePct(self, cur, max, log):
+        usagePct = ""
+            
+        if cur == -1:
+            usagePct = 'OTHER'
+        elif cur == -2:
+            usagePct = 'UNKNOWN'
+        elif cur == -3:
+            usagePct = 'UNKNOWN'
+        else:
+	    try:
+	        usagePct = "{0:.0f} %".format(100 - (float(cur)/max * 100))
+	    except:
+	        usagePct = 'na'
+        
+        log.debug("Calculate usagePct: %s / %s = %s", cur, max, usagePct)
+        return usagePct
 

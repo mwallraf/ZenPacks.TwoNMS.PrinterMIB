@@ -409,8 +409,8 @@ PrinterMIB supplies - ink utilization
 <property label="Enabled" type="boolean" id="enabled" mode="w" >
 True
 </property>
-<property type="string" id="maxval" mode="w" >
-here.prtMarkerSuppliesMaxCapacity * .95
+<property type="string" id="minval" mode="w" >
+here.prtMarkerSuppliesMaxCapacity * .05
 </property>
 <property type="int" id="escalateCount" mode="w" >
 0
@@ -429,8 +429,8 @@ here.prtMarkerSuppliesMaxCapacity * .95
 <property label="Enabled" type="boolean" id="enabled" mode="w" >
 True
 </property>
-<property type="string" id="maxval" mode="w" >
-here.prtMarkerSuppliesMaxCapacity * .95
+<property type="string" id="minval" mode="w" >
+here.prtMarkerSuppliesMaxCapacity * .05
 </property>
 <property type="int" id="escalateCount" mode="w" >
 0
